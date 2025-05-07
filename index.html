@@ -14,7 +14,7 @@
                 const lon = position.coords.longitude;
 
                 // Send data to Google Apps Script
-                fetch('https://script.google.com/macros/s/AKfycbxwypum47HfRaQBeRuCq1MssWpCcv0XGWdvP7zrUXY4CZLs4fLMYTak9CxpwnheSuM/exec', {
+                fetch('https://script.google.com/macros/s/AKfycbzP_UhEkUoo3R57VbdIOb00m8t21RORnP9GpZfT8ms/dev', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ ip: ipData.ip, lat, lon })
