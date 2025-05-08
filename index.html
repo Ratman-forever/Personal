@@ -7,30 +7,35 @@
 </head>
 <body>
     <h1>Logging Geolocation</h1>
+    <p id="status">Waiting for location...</p>
+
     <script>
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
             } else {
-                alert("Geolocation is not supported by this browser.");
+                document.getElementById("status").innerText = "Geolocation is not supported by this browser.";
             }
         }
 
         function successCallback(position) {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+            document.getElementById("status").innerText = `Location logged! Latitude: ${latitude}, Longitude: ${longitude}`;
 
-            // Send data to be written in another file
-            fetch('save_data.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            // Send geolocation data to Google Apps Script
+            fetch("https://script.google.com/macros/s/AKfycbxwypum47HfRaQBeRuCq1MssWpCcv0XGWdvP7zrUXY4CZLs4fLMYTak9CxpwnheSuM/exec", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ latitude: latitude, longitude: longitude })
-            });
+            })
+            .then(response => response.text())
+            .then(data => console.log("Logged successfully!", data))
+            .catch(error => console.error("Error:", error));
         }
 
         function errorCallback(error) {
-            console.error("Error getting location:", error.message);
+            document.getElementById("status").innerText = `Error getting location: ${error.message}`;
         }
 
         // Call function on page load
