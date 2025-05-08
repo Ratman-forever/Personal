@@ -3,25 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP Logger</title>
+    <title>Geolocation Logger</title>
 </head>
 <body>
-    <h1>Logging IP and Location</h1>
+    <h1>Logging Geolocation</h1>
     <script>
-        fetch('https://ipinfo.io/json?token=YOUR_TOKEN_HERE')
-            .then(response => response.json())
-            .then(data => {
-                const ip = data.ip;
-                const location = `${data.city}, ${data.region}, ${data.country}`;
-                console.log(`IP: ${ip}, Location: ${location}`);
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
 
-                // Send data to be written in another file
-                fetch('save_data.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ip: ip, location: location })
-                });
+        function successCallback(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+            // Send data to be written in another file
+            fetch('save_data.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ latitude: latitude, longitude: longitude })
             });
+        }
+
+        function errorCallback(error) {
+            console.error("Error getting location:", error.message);
+        }
+
+        // Call function on page load
+        getLocation();
     </script>
 </body>
 </html>
